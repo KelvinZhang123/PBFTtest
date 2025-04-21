@@ -2,24 +2,19 @@
 import geni.portal as portal
 import geni.rspec.pg as rspec
 
-# Number of PBFT replicas (3f+1; here f=1 -> 4 replicas)
 NUM_REPLICAS = 4
 
-# 1. Initialize GENI portal context and RSpec
 pc = portal.Context()
 request = rspec.Request()
 
-# 2. Create a LAN for inter-node communication
 lan = request.LAN('lan0')
 lan.best_effort = False
 
-# 3. Allocate replicas
 for i in range(NUM_REPLICAS):
     node = request.RawPC('replica{}'.format(i))
     iface = node.addInterface('if0')
     lan.addInterface(iface)
 
-    # 4. Bootstrap each node: install Go, clone your fork, build, configure, and run server
     node.addService(rspec.Execute(
         shell='bash',
         command="""
@@ -37,7 +32,7 @@ go build -o server ./cmd/server
 
 # Generate config file
 mkdir -p config
-ip=$(hostname -I | awk '{print $1}')
+ip=$(hostname -I | awk '{{print $1}}')    # Double {{ }} here
 cat > config/config.yaml <<EOF
 node:
   id: "replica{replica_id}"
@@ -55,5 +50,4 @@ EOF
         )
     ))
 
-# 5. Output the RSpec
 portal.Context().printRequestRSpec(request)
