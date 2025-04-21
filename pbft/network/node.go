@@ -41,15 +41,16 @@ func NewNode(nodeID string) *Node {
 		// Hard-coded for test.
 		NodeID: nodeID,
 		NodeTable: map[string]string{
-			"Apple": "localhost:1111",
-			"MS": "localhost:1112",
-			"Google": "localhost:1113",
-			"IBM": "localhost:1114",
+			"replica0": ":8000",
+			"replica1": ":8001",
+			"replica2": ":8002",
+			"replica3": ":8003",
 		},
 		View: &View{
 			ID: viewID,
-			Primary: "Apple",
+			Primary: "replica0",
 		},
+		
 
 		// Consensus-related struct
 		CurrentState: nil,
